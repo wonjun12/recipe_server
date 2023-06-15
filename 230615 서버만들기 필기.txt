@@ -1,0 +1,13 @@
+get : 데이터를 가져올때
+post : 데이터를 만들때
+put : 데이터를 변경할때
+delete : 데이터를 삭제할때
+
+서버 개발 필요한 툴
+ - Postman
+
+
+- 서버의 환경과 동일하게 만들어서 작업에 들어가야하낟.
+   - aws Lambda를 이용한다.
+   - 현재 최신버전 파이썬 3.10 버전
+   - conda create -n lambda_app python==3.10
