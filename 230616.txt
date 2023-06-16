@@ -1,0 +1,132 @@
+flask 프레임워크 설치
+
+pip install flask flask-restful
+
+
+
+== 기본 만들기 (app.py)
+from flask import Flask
+
+app = Flask(__name__)
+
+if __name__ == '__main__':
+    app.yun()
+
+= 명령어
+  - python app.py
+
+
+===
+ - 서버에서 DB로 요청하는 전용 유저를 생성해야함.
+   - admin계정은 나만 사용하도록 설정
+   - 서버에서 전용 DB를 사용할 수 있도록 만들며, 권한 주고
+    use mysql;
+    create user 'recipe_db_user'@'%' identified by '1234';
+    - recipe_db_user의 이름을 만들며, % = 모든 네트워크의 관해 접속할수 있게, 비밀번호를 1234로 설정한다ㅣ.
+    grant ALL privileges on recipe_db.* to 'recipe_db_user'@'%';
+    - 모든 권한을 부여한다. recipe_db 스키마의 모든 테이블을, recipe_db_user의 권한을
+      - 해당 스키마의 권한만 부여했으며, 다른 스키마는 만들지 못함
+
+
+===
+  - API 명세서
+    - 레시피 등록 API
+        1. URL 필요
+            - POST http://127.0.0.1:5000/recipes
+        2. Request 요청
+            - name, description, num_of_servings, cook_time, directions, is_publish
+        3. Response 응답
+            - {
+                result : success / fail
+            }
+    - 레시피 전체 조회 API
+        1. URL 필요
+            - GET http://127.0.0.1:5000/recipes
+        2. Request 요청
+            - 데이터 없음
+        3. Response 응답
+            - {
+                result : success,
+                count : 3,
+                items : [
+                    {
+                        id,
+                        name,
+                        description
+                    }
+                ]
+            }
+
+- Postman 실행
+    - New -> Collections -> 이름 설정
+    - add Request
+    - 보낼 주소 입력 : POST > 주소 입력
+    - Body : raw -> JSON 설정
+        - body 내용 입력
+
+== 요청 / 응답 처리
+ = app.py
+    from flask_restful import Api
+    from resources.recipe import 아무거나_이름_넣기
+
+    api = Api(app)
+
+    api.add_resource( 아무거나_이름_넣기 , 경로)
+
+ = resources/recipe.py
+    from flask_restful import Resource
+
+    class 아무거나_이름_넣기(Resource) : 
+        def post(self):
+            print('API 동작맨')
+            
+            return { # 클라이언트 응답
+                'result' : 'success'
+            }
+
+
+== DB 연결 및 저장시키기
+    - 1. 전용 DB 설치
+        - pip install mysql-connector-python
+    - 2. DB 관련 정보를 저장시킬 파일 만들고, 정보 넣기.
+        - config.py 파일 만듦
+            class Config:
+                HOST = end_point
+                DATABASE = 'recipe_db'
+                DB_USER = 'recipe_db_user'
+                DB_PASSWORD = '1234'
+    - 3. DB 연결 파일 만들기
+        - mysql_sconnection.py
+            import mysql.connector
+            from config import Config
+
+            def get_connection():
+                connection = mysql.connector.connect(
+                    host = Config.HOST,
+                    database = Config.DATABASE,
+                    user = Config.DB_USER,
+                    password = Config.DB_PASSWORD
+                )
+
+                return connection
+    - 4. DB를 사용할 공간에 작성한다. / 연결 완료
+        - resources/recipe.py - POST()
+
+        connection = get_connection()
+        
+== 특정 레시피 1개 가져오는 API
+    1. URL
+        - GET http://127.0.0.1:5000/recipes/2
+            - 마지막은 레시피ID
+    - GET 메소드는, body에 데이터를 보내지 않는다.
+    2. 1개의 데이터 응답
+
+== 레시피 수정하는 API
+    1. URL
+        - PUT http://127.0.0.1:5000/recipes/1
+    2. body의 데이터 담아서 보내기 (json)
+
+== 특정 레시피 삭제하는 API
+    1. URL
+        - DELETE http://127.0.0.1:5000/recipes/1
+    - Delete와 Get은 body에 데이터를 넣으면 안된다.
