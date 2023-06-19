@@ -1,0 +1,83 @@
+= sql user 테이블 만들기
+ - 유저 로그인을 위해 user 테이블을 만들자.
+
+
+ == user 관련 API
+  1. 회원 가입 API 만들기
+    - url 
+        - POST http://127.0.0.1:5000/user/register
+    - request
+        - {
+            "username" : "김홀길",
+            "email": "악동뮤지션",
+            "password" : "1234"
+        }
+    - Response
+        - 성공 : {
+            "result" : "success"
+        }
+        - 실패 : {
+            "result" : "fail",
+            "error" : "에러내용"
+        }
+    - 회원가입 이메일 여부 확인
+        - pip install email-validator
+    - 비밀번호 암호화
+        - 암호화
+            - pip install passlib
+        - 해쉬
+            - pip install psycopg2-binary
+
+
+  2. 로그인 API 만들기
+    -url
+        -POST http://127.0.0.1/user/login
+    - json
+        {
+            'email' : 이메일
+            'password' : 123
+        }
+
+  3. 로그아웃 API 만들기
+    - url
+        - Delete http://127.0.0.1/user/logout
+    - jwt 인증을 받아야함
+        - 헤더에 넣어서 보내기때문에, 헤더로 받자
+
+== JWT 사용하기
+    - pip install flask-jwt-extended
+
+
+== 개발하면서 유용한 함수들 모아놓기 파일 만들기
+    - utils.py
+
+
+    - lambda_app 가상환경 설치환경
+        - python==3.10, flask, flask_restful, email-validator
+
+
+
+
+== 레시피 관련 API
+    1. 레시피 등록 API
+        - user id와 forgin을 위해 테스트 데이터 삭제
+        - 레시피 등록할때 얻는 JWT 키값을 헤더에 추가해서 보낸다.
+    2. 레시피 수정 API
+        - 레시피 수정할때 JWT 키값을 헤더에 추가해 수정한다.
+    3. 레시피 삭제 API
+        - 레시피 삭제할때 JWT 키값을 헤더에 추가해준다.
+    4. 레시피 전체 보기 API
+        - 유저의 이름을 들고오고, is_publish가 0이면 가져오면 안된다.
+    5. 레시피 1개 조회 API
+        - 유저의 이름을 추가
+
+
+== 직접 만들기 레시피 실습
+    1. 자신이 만든 레시피를 공개하는 API
+        - url
+            - put http://127.0.0.1/recipe/<int>/publish
+    2. 자신이 만든 레시피를 임시저장하는 API
+    3. 자신의 레시피 리스트만 가져오는 API
+        (임시저장, 공개 모두 다 가져오는것)
+        - url
+            - get http://127.0.0.1/myrecipes
