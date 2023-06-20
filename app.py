@@ -40,7 +40,7 @@ api.add_resource( UserLoginResource , '/user/login')
 api.add_resource( UserLogoutResource , '/user/logout')
 
 
-# 실습
+# 실습 1
 # 1. 자신이 만든 레시피를 공개하는 API
 api.add_resource( 실습_레시피_공개수정, '/recipes/<int:recipe_id>/publish')
 # 2. 자신이 만든 레시피를 임시저장하는 API
